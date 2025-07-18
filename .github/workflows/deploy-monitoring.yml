@@ -17,6 +17,6 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/flask-devops
+            cd ~/fastapi-devops
             docker-compose up -d prometheus
             docker-compose up -d grafana

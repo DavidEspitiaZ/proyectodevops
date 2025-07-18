@@ -32,3 +32,13 @@ jobs:
           docker build -t ghcr.io/"$REPO_OWNER_LOWERCASE"/"$REPO_NAME_LOWERCASE"/app:${{ github.sha }} -t ghcr.io/"$REPO_OWNER_LOWERCASE"/"$REPO_NAME_LOWERCASE"/app:latest .
 
           docker push ghcr.io/"$REPO_OWNER_LOWERCASE"/"$REPO_NAME_LOWERCASE"/app --all-tags
+          
+      - name: Empaquetar código fuente como artefacto
+        run: |
+          tar -czf app.tar.gz code/
+
+      - name: Subir artefacto a Nexus
+        run: |
+          curl -v -u "${{ secrets.NEXUS_USER }}:${{ secrets.NEXUS_PASSWORD }}" \
+            --upload-file app.tar.gz \
+            "http://${{ secrets.NEXUS_HOST }}:8081/repository/devops-artifacts/app-${{ github.sha }}.tar.gz"

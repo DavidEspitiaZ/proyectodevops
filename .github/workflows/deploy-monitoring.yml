@@ -2,8 +2,9 @@ name: Deploy Monitoring Services to EC2
 
 on:
   push:
-    paths:
-      - 'monitoring/**' 
+    branches:
+      - develop
+  workflow_dispatch:
 
 jobs:
   deploy:

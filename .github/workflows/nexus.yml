@@ -1,9 +1,6 @@
 name: Package and Upload to Nexus
 
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
 
 jobs:

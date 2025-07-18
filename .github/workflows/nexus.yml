@@ -1,0 +1,24 @@
+name: Package and Upload to Nexus
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch: #solo funciona en la main
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create tar.gz of app code
+        run: |
+          tar -czf app.tar.gz code/
+
+      - name: Upload artifact to Nexus
+        run: |
+          curl -v -u "${{ secrets.NEXUS_USER }}:${{ secrets.NEXUS_PASSWORD }}" \
+            --upload-file app.tar.gz \
+            "http://${{ secrets.NEXUS_HOST }}:8081/repository/devops-artifacts/app-${{ github.sha }}.tar.gz"

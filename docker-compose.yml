@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./code:/app
+    networks:
+      - observability-network
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - app
+    networks:
+      - observability-network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - observability-network
+
+  nexus:
+    image: sonatype/nexus3
+    ports:
+      - "8081:8081"
+    networks:
+      - observability-network
+    volumes:
+      - nexus-data:/nexus-data
+
+networks:
+  observability-network:
+    driver: bridge
+
+volumes:
+  grafana-storage:
+  nexus-data:
